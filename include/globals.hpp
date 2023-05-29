@@ -1,15 +1,15 @@
 #ifndef _GLOBALS_HPP_
 #define _GLOBALS_HPP_
 
-#define FLport 1
-#define BLport 2
-#define FRport 3
-#define BRport 4
+#define FLport 12
+#define BLport 11
+#define FRport 14
+#define BRport 13
 
-#define cataLport 5
-#define cataRport 6
+#define cataLport 1
+#define cataRport 20
 
-#define intakeport 7
+#define intakeport 19
 
 //#define matchloaderport
 

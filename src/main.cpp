@@ -23,7 +23,13 @@ void on_center_button() {
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-
+	Motor FL(FLport, E_MOTOR_GEARSET_06, false, E_MOTOR_ENCODER_DEGREES);
+	Motor BL(BLport, E_MOTOR_GEARSET_06, false, E_MOTOR_ENCODER_DEGREES);
+	Motor FR(FRport, E_MOTOR_GEARSET_06, true, E_MOTOR_ENCODER_DEGREES);
+	Motor BR(BRport, E_MOTOR_GEARSET_06, true, E_MOTOR_ENCODER_DEGREES);
+	Motor cataL(cataLport, E_MOTOR_GEARSET_06, false, E_MOTOR_ENCODER_DEGREES);
+	Motor cataR(cataRport, E_MOTOR_GEARSET_06, true, E_MOTOR_ENCODER_DEGREES);
+	Motor intake(intakeport, E_MOTOR_GEARSET_06, true, E_MOTOR_ENCODER_DEGREES);
 }
 
 /**
@@ -99,7 +105,7 @@ void opcontrol() {
 			} 
 			
 			else {
-				double power = master.get_analog(ANALOG_LEFT_Y);
+				double power =  master.get_analog(ANALOG_LEFT_Y);
 				double turn = master.get_analog(ANALOG_RIGHT_X);
 				left = power + turn;
 				right = power - turn;
@@ -109,9 +115,9 @@ void opcontrol() {
 		FR.move(right);
 		BR.move(right);
 
-		cataL.move(120 * master.get_digital(DIGITAL_R1));
-		cataR.move(-120 * master.get_digital(DIGITAL_R1));
+		cataL.move(120 * (master.get_digital(DIGITAL_R1) - master.get_digital(DIGITAL_R2)));
+		cataR.move(120 * (master.get_digital(DIGITAL_R1) -  master.get_digital(DIGITAL_R2)));
 
-		intake.move(-120 * (master.get_digital(DIGITAL_L1) - master.get_digital(DIGITAL_L2)));
+		intake.move(120 * (master.get_digital(DIGITAL_L1) - master.get_digital(DIGITAL_L2)));
 	}
 }
