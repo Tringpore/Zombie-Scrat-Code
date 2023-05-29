@@ -4,6 +4,7 @@
 #include "pros/misc.h"
 #include "pros/motors.h"
 #include "globals.hpp"
+#include "mech_lib.hpp"
 
 /**
  * A callback function for LLEMU's center button.
@@ -107,5 +108,10 @@ void opcontrol() {
 		BL.move(left);
 		FR.move(right);
 		BR.move(right);
+
+		cataL.move(127 * master.get_digital(DIGITAL_R1));
+		cataR.move(-127 * master.get_digital(DIGITAL_R1));
+
+		intake.move(-127 * (master.get_digital(DIGITAL_L1) - master.get_digital(DIGITAL_L2)));
 	}
 }
