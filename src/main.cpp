@@ -109,9 +109,9 @@ void opcontrol() {
 		FR.move(right);
 		BR.move(right);
 
-		cataL.move(127 * master.get_digital(DIGITAL_R1));
-		cataR.move(-127 * master.get_digital(DIGITAL_R1));
+		cataL.move(120 * master.get_digital(DIGITAL_R1));
+		cataR.move(-120 * master.get_digital(DIGITAL_R1));
 
-		intake.move(-127 * (master.get_digital(DIGITAL_L1) - master.get_digital(DIGITAL_L2)));
+		intake.move(-120 * (master.get_digital(DIGITAL_L1) - master.get_digital(DIGITAL_L2)));
 	}
 }
