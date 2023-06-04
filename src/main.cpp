@@ -119,5 +119,7 @@ void opcontrol() {
 		cataR.move(120 * (master.get_digital(DIGITAL_R1) -  master.get_digital(DIGITAL_R2)));
 
 		intake.move(120 * (master.get_digital(DIGITAL_L1) - master.get_digital(DIGITAL_L2)));
+		
+		delay(5);
 	}
 }
