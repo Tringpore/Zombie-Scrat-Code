@@ -23,13 +23,23 @@ void on_center_button() {
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-	Motor FL(FLport, E_MOTOR_GEARSET_06, false, E_MOTOR_ENCODER_DEGREES);
+	Motor FL(FLport, E_MOTOR_GEARSET_06, true, E_MOTOR_ENCODER_DEGREES);
 	Motor BL(BLport, E_MOTOR_GEARSET_06, false, E_MOTOR_ENCODER_DEGREES);
-	Motor FR(FRport, E_MOTOR_GEARSET_06, true, E_MOTOR_ENCODER_DEGREES);
+	Motor FR(FRport, E_MOTOR_GEARSET_06, false, E_MOTOR_ENCODER_DEGREES);
 	Motor BR(BRport, E_MOTOR_GEARSET_06, true, E_MOTOR_ENCODER_DEGREES);
 	Motor cataL(cataLport, E_MOTOR_GEARSET_06, false, E_MOTOR_ENCODER_DEGREES);
 	Motor cataR(cataRport, E_MOTOR_GEARSET_06, true, E_MOTOR_ENCODER_DEGREES);
 	Motor intake(intakeport, E_MOTOR_GEARSET_06, true, E_MOTOR_ENCODER_DEGREES);
+
+	pros::Imu IMU(IMUPort);
+  	IMU.reset();
+
+	FL.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+	BL.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+	FR.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+	BR.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+
+	Task catControlTask(catControl, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "My Task");
 }
 
 /**
@@ -65,8 +75,39 @@ void competition_initialize() {
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
-void autonomous() {
 
+void base(double left, double right) {
+	Motor FL(FLport);
+	Motor BL(BLport);
+	Motor FR(FRport);
+	Motor BR(BRport);
+
+	FL.move(left);
+	BL.move(left);
+	FR.move(right);
+	BR.move(right);
+}
+
+void baseMove(double dis, double speed, double cutoff) {
+	Motor FL(FLport);
+	Motor FR(FRport);
+
+	double startPos = fabs((FL.get_position() + FR.get_position())/2);
+	base(speed, speed);
+	while(fabs(fabs(FL.get_position() + FR.get_position())/2 - startPos) < dis) delay(5);
+	base(0, 0);
+}
+
+void baseTurn (double angle, double speed, double cutoff) {
+	Imu IMU(IMUPort);
+	int dir = angle - IMU.get_heading() > 0 ? 1 : -1;
+	base(dir * speed, dir * (-speed));
+	while (fabs(angle - IMU.get_heading()) < 2) delay(5);
+	base(0, 0);
+}
+
+void autonomous() {
+	baseMove(4000, 85, 100000000000);
 }
 
 /**
@@ -89,9 +130,6 @@ void opcontrol() {
 	Motor FR(FRport);
 	Motor BR(BRport);
 
-	Motor cataL(cataLport);
-	Motor cataR(cataRport);
-
 	Motor intake(intakeport);
 
 	bool tankdrive = true;
@@ -113,10 +151,9 @@ void opcontrol() {
 		FL.move(left);
 		BL.move(left);
 		FR.move(right);
-		BR.move(right);
+		BR.move(right);	
 
-		cataL.move(120 * (master.get_digital(DIGITAL_R1) - master.get_digital(DIGITAL_R2)));
-		cataR.move(120 * (master.get_digital(DIGITAL_R1) -  master.get_digital(DIGITAL_R2)));
+		if(master.get_digital_new_press(DIGITAL_R1)) shootCata();
 
 		intake.move(120 * (master.get_digital(DIGITAL_L1) - master.get_digital(DIGITAL_L2)));
 		

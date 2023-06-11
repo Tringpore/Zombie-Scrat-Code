@@ -2,15 +2,17 @@
 #define _GLOBALS_HPP_
 
 #define FLport 12
-#define BLport 11
-#define FRport 14
-#define BRport 13
+#define BLport 13
+#define FRport 11
+#define BRport 2
 
-#define cataLport 1
-#define cataRport 20
+#define cataLport 14
+#define cataRport 1
 
 #define intakeport 19
 
+#define rotPort 20
+#define IMUPort 19
 //#define matchloaderport
 
 #endif 
